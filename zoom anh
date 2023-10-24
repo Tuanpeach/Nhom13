@@ -1,0 +1,40 @@
+import cv2
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+
+original_image = cv2.imread(r'C:\Users\DIEN MAY XANH\OneDrive\Pictures\Saved Pictures\anhmau.jpg')
+def on_scale_change(value):
+    global scale_factor
+    scale_factor = float(value)
+    update_images()
+
+
+def update_images():
+    # Tạo ảnh co dãn
+    zoomed_img = cv2.resize(original_image, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
+
+    cv2.imshow('img goc', original_image)
+
+    cv2.imshow('img co dan', zoomed_img)
+
+root = tk.Tk()
+root.title("Zoom Image")
+root.geometry('500x500')
+
+scale_label = ttk.Label(root, text="Tỉ lệ zoom:")
+scale_label.pack()
+
+scale_slider = ttk.Scale(root, from_=0.1, to=2, orient="horizontal", command=on_scale_change)
+
+scale_slider.set(1.0)
+scale_slider.pack()
+
+scale_factor = 1.0
+
+update_images()
+
+root.mainloop()
+
+
+cv2.destroyAllWindows()
