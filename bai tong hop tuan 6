@@ -1,0 +1,85 @@
+import cv2
+import tkinter as tk
+from tkinter import ttk
+
+import cv2.typing
+from PIL import Image, ImageTk
+import numpy as np
+
+
+def on_scale_change(value):
+    global scale_factor
+    scale_factor = float(value)
+    update_images()
+
+
+def rotate_image():
+    global rotation_angle
+    rotation_angle += 130
+    update_images()
+
+
+def update_images():
+    # Tạo ảnh co dãn
+    zoomed_img = cv2.resize(original_image, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
+
+    # Tạo Pillow Image từ NumPy array
+    pil_img = Image.fromarray(cv2.cvtColor(zoomed_img, cv2.COLOR_BGR2RGB))
+
+    # Quay ảnh
+    rotated_img = pil_img.rotate(rotation_angle, expand=True)
+
+    # Chuyển đổi lại thành NumPy array
+    rotated_img = cv2.cvtColor(np.array(rotated_img), cv2.COLOR_RGB2BGR)
+
+    # Hiển thị ảnh gốc
+    cv2.imshow('Original Image', original_image)
+
+    # Hiển thị ảnh co dãn
+    cv2.imshow('Zoomed Image', rotated_img)
+
+# Đọc ảnh
+original_image = cv2.imread(r'C:\Users\DIEN MAY XANH\OneDrive\Pictures\Saved Pictures\anhmau.jpg')
+
+original_image_dentrang = cv2.imread(r'C:\Users\DIEN MAY XANH\OneDrive\Pictures\Saved Pictures\anhmau.jpg', cv2.IMREAD_GRAYSCALE)
+cv2.imshow('anhdentrang', original_image_dentrang)
+# bien ảnh
+original_image2 = cv2.Canny(original_image_dentrang,threshold1=100,threshold2=700)
+cv2.imshow('anh2', original_image2)
+
+original_image3 = cv2.Canny(original_image_dentrang,threshold1=500,threshold2=100)
+cv2.imshow('anh3', original_image3)
+
+original_image4 = cv2.Canny(original_image_dentrang,threshold1=400,threshold2=400)
+cv2.imshow('anh4', original_image3)
+
+
+
+# Khởi tạo biến tỉ lệ co dãn và góc quay
+scale_factor = 1.0
+rotation_angle = 0
+
+# Tạo cửa sổ tkinter
+root = tk.Tk()
+root.title("bai tap")
+
+# Tạo thanh trượt
+scale_label = ttk.Label(root, text="Tỉ lệ zoom:")
+scale_label.pack()
+
+scale_slider = ttk.Scale(root, from_=0.1, to=5, orient="horizontal", command=on_scale_change)
+scale_slider.set(1.0)  # Giá trị mặc định
+scale_slider.pack()
+
+# Tạo nút nhấn
+rotate_button = ttk.Button(root, text="quay ảnh", command=rotate_image)
+rotate_button.pack()
+
+# Hiển thị ảnh gốc và co dãn
+update_images()
+
+# Bắt sự kiện thoát cửa sổ
+root.mainloop()
+
+# Giải phóng tài nguyên OpenCV
+cv2.destroyAllWindows()
