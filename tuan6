@@ -1,0 +1,33 @@
+test_data = df.iloc[split_index:]
+
+# Extract features and target from the data
+train_x = train_data.drop('Performance Index', axis=1)
+train_y = train_data['Performance Index']
+test_x = test_data.drop('Performance Index', axis=1)
+train_x = train_data.drop('Performance Index', axis=1).values  # Chuyển dữ liệu thành mảng NumPy
+train_y = train_data['Performance Index'].values
+
+# Create a model for the data
+X = tf.constant(train_x, dtype=tf.float32)
+Y = tf.constant(train_y, dtype=tf.float32)
+
+# Initialize variables (weights and bias)
+W = tf.Variable(np.random.randn(len(train_x.columns), 1), name="W", dtype=tf.float32)
+W = tf.Variable(np.random.randn(train_x.shape[1], 1), name="W", dtype=tf.float32)  # Sử dụng train_x.shape[1] thay vì len(train_x.columns)
+b = tf.Variable(np.random.randn(), name="b", dtype=tf.float32)
+
+# Set learning rate
+@@ -58,10 +57,11 @@ for epoch in range(training_epochs):
+        print("Epoch", (epoch + 1), ": loss =", loss.numpy())
+
+# Use the trained model to make predictions on the test set
+test_x = tf.constant(test_x, dtype=tf.float32)
+test_predictions = linear_regression(test_x)
+test_x = tf.constant(test_data.drop('Performance Index', axis=1).values, dtype=tf.float32)
+
+# Calculate the test loss
+test_loss = mean_squared_error(test_data['Performance Index'], test_predictions)
+test_predictions = linear_regression(test_x)
+test_loss = mean_squared_error(test_data['Performance Index'].values, test_predictions)
+
+print("Test loss =", test_loss.numpy())
